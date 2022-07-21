@@ -1,0 +1,13 @@
+account_id = "cce74c2aa0bfc47da7b991f63a35ab82"
+name = "cf-short-link"
+main = "src/index.ts"
+compatibility_date = "2022-07-21"
+workers_dev = true
+
+# Minify the script before uploading.
+minify = true
+kv_namespaces = [
+  { binding = "LINKS", id = "f62b306ddcb541d8902686b585c09294",preview_id = "da063ffe73be4689882f7f7f6b8f1d86" },
+]
+
+vars = { PASSWORD = "123" }
