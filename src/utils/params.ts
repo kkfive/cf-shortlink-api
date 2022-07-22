@@ -17,7 +17,10 @@ export async function getRequestInfo(
       params[key] = value
     }
   } else if (request.method.toUpperCase() === 'POST') {
-    const body = ((await request.json()) as {}) || {}
+    let body = {}
+    try {
+      body = await request.json()
+    } catch (e) {}
 
     for (const [key, value] of Object.entries(body)) {
       params[key] = value as any

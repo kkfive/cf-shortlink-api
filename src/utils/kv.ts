@@ -21,7 +21,7 @@ export class KvHelper {
     }
     return result
   }
-  async list() {
-    return await this.kv.list()
+  async list(limit = 10, cursor: string | null = null) {
+    return await this.kv.list({ limit, cursor })
   }
 }

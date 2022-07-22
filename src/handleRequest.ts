@@ -1,4 +1,4 @@
-import { addUrl, deleteUrl, getUrl } from './handler/api'
+import { addUrl, deleteUrl, getUrl, listUrl, editUrl } from './handler/api'
 import { Env } from './types/env'
 import { returnRes } from './utils/common'
 import { KvHelper } from './utils/kv'
@@ -11,20 +11,36 @@ export async function handleRequest(
 ): Promise<Response> {
   const { params, path } = await getRequestInfo(request)
   const method = request.method.toUpperCase()
-  if (params.password === env.PASSWORD) {
-    // 密码密文不正确
-    return Response.redirect('')
-  }
-  const kv = new KvHelper(env.LINKS)
-  if (method === 'POST') {
-    let response: Response = returnRes({ code: 0, msg: 'error', data: null })
 
+  const kv = new KvHelper(env.LINKS)
+
+  if (method === 'POST') {
+    if (params.password !== env.PASSWORD) {
+      // 密码密文不正确
+      return returnRes({ code: 0, msg: '密文不正确', data: null })
+    }
+    let response: Response = returnRes({ code: 0, msg: 'error', data: null })
     // 添加链接
     if (params.type === 'add') {
-      console.log(params.type)
-      response = await addUrl(params.url, kv)
+      let len = params.length || 6
+      try {
+        len = Number(len)
+      } catch (e) {
+        len = 6
+      }
+      len = Math.max(len, 6)
+      response = await addUrl(params.url, len, kv)
     } else if (params.type === 'delete') {
       response = await deleteUrl(params.key, kv)
+    } else if (params.type === 'list') {
+      let limit = 10
+      try {
+        limit = Number(params.limit)
+      } catch (e) {}
+      response = await listUrl(kv, limit, params.cursor)
+    } else if (params.type === 'update') {
+      const key = params.key
+      response = await editUrl(params.url, key, kv)
     }
     return response
     // API请求
