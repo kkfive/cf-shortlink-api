@@ -2,7 +2,7 @@ account_id = "cce74c2aa0bfc47da7b991f63a35ab82"
 name = "cf-short-link"
 main = "src/index.ts"
 compatibility_date = "2022-07-21"
-workers_dev = false
+workers_dev = true
 
 # Minify the script before uploading.
 minify = true

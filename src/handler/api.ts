@@ -2,19 +2,18 @@ import { KvHelper } from '../utils/kv'
 import { randomString, redirect, returnRes } from '../utils/common'
 export async function addUrl(
   url: string,
-  len: number,
+  key: string,
   kv: KvHelper
 ): Promise<Response> {
-  const random_key = randomString(len || 6)
-  const flag = await kv.check(random_key)
+  const flag = await kv.check(key)
 
   if (flag) {
-    return addUrl(url, len, kv)
+    return returnRes({ code: 0, msg: '当前KEY已存在', data: null })
   } else {
-    const result = await kv.save(random_key, url)
+    const result = await kv.save(key, url)
 
     if (result) {
-      return returnRes({ code: 200, msg: 'success', data: random_key })
+      return returnRes({ code: 200, msg: 'success', data: key })
     } else {
       return returnRes({ code: 0, msg: 'error', data: null })
     }

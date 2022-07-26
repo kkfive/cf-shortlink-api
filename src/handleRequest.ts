@@ -22,14 +22,11 @@ export async function handleRequest(
     let response: Response = returnRes({ code: 0, msg: 'error', data: null })
     // 添加链接
     if (params.type === 'add') {
-      let len = params.length || 6
-      try {
-        len = Number(len)
-      } catch (e) {
-        len = 6
+      let key = params.key
+      if (!key) {
+        return returnRes({ code: 0, msg: 'key不能为空', data: null })
       }
-      len = Math.max(len, 6)
-      response = await addUrl(params.url, len, kv)
+      response = await addUrl(params.url, key, kv)
     } else if (params.type === 'delete') {
       response = await deleteUrl(params.key, kv)
     } else if (params.type === 'list') {
@@ -46,7 +43,6 @@ export async function handleRequest(
     // API请求
   } else if (method === 'GET') {
     if (!path) {
-      console.log('首页处理')
       return returnRes({ code: 200, msg: 'success', data: '新服务正在重构' })
     } else {
       return await getUrl(path, kv)
