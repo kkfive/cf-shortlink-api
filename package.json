@@ -11,5 +11,9 @@
     "dev": "wrangler dev",
     "build": "wrangler build",
     "deploy": "wrangler publish"
+  },
+  "volta": {
+    "node": "16.16.0",
+    "npm": "8.15.0"
   }
 }
