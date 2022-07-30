@@ -42,6 +42,11 @@ export async function handleRequest(
       const key = params.key
       response = await editUrl(params.url, key, kv)
     }
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    response.headers.set(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, X-Requested-With'
+    )
     return response
     // API请求
   } else if (method === 'GET') {
