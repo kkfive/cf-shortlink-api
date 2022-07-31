@@ -13,7 +13,6 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
-    if: github.event.repository.owner.id == github.event.sender.id
     env:
       PASSWORD: ${{ secrets.PASSWORD}}
     steps:
