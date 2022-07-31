@@ -3,15 +3,15 @@ import { randomString, redirect, returnRes } from '../utils/common'
 export async function addUrl(
   url: string,
   key: string,
-  kv: KvHelper
+  kv: KvHelper,
+  expiration?: number
 ): Promise<Response> {
   const flag = await kv.check(key)
 
   if (flag) {
     return returnRes({ code: 0, msg: '当前KEY已存在', data: null })
   } else {
-    const result = await kv.save(key, url)
-
+    const result = await kv.save(key, url, expiration)
     if (result) {
       return returnRes({ code: 200, msg: 'success', data: key })
     } else {
@@ -44,16 +44,18 @@ export async function listUrl(
     limit = Number(limit)
   } catch (e) {}
   const kvNamespaceListResult = await kv.list(limit, cursor)
+
   const list: any[] = []
   for await (let item of kvNamespaceListResult.keys) {
     const key = item.name
     const value = await kv.get(key)
-    list.push({ key, value })
+
+    list.push({ key, value, expiration: item.expiration })
   }
   return returnRes({
     code: 200,
     msg: 'success',
-    data: { list, cursor }
+    data: { list, cursor: kvNamespaceListResult.cursor }
   })
 }
 export async function editUrl(url: string, key: string, kv: KvHelper) {

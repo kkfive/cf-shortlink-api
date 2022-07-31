@@ -5,8 +5,14 @@ export class KvHelper {
   async check(key: string): Promise<boolean> {
     return (await this.kv.get(key)) ? true : false
   }
-  async save(key: string, value: string): Promise<boolean> {
-    await this.kv.put(key, value)
+  async save(
+    key: string,
+    value: string,
+    expiration?: number
+  ): Promise<boolean> {
+    await this.kv.put(key, value, {
+      expiration: expiration ? expiration : undefined
+    })
     return true
   }
   async get(key: string): Promise<string | null> {

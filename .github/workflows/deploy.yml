@@ -1,0 +1,57 @@
+# workflow name
+name: Deploy
+
+# master branch on push, auto run
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    if: github.event.repository.owner.id == github.event.sender.id
+    env:
+      PASSWORD: ${{ secrets.PASSWORD}}
+    steps:
+      - name: 检查master分支
+        uses: actions/checkout@master
+
+      - uses: actions/setup-node@main
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: bradyjoslin/setup-wrangler@v1
+        with:
+          wrangler_version: '1.6.0'
+
+      - name: 缓存
+        uses: actions/cache@v2
+        id: cache-dependencies
+        with:
+          path: node_modules
+          key: ${{runner.OS}}-${{hashFiles('./package-lock.lock')}}
+
+      - name: 安装依赖
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: |
+          npm install
+
+      - name: 替换密钥
+        run: |
+          if [ $PASSWORD ]; then sed -i 's/PASSWORD=.*/PASSWORD=\"$PASSWORD\"/' wrangler.toml; fi;
+
+      - name: 部署CF worker
+        uses: cloudflare/wrangler-action@1.3.0
+        with:
+          apiKey: ${{ secrets.CF_API_KEY }}
+          email: ${{ secrets.CF_EMAIL }}
+
+      - name: 删除 workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          retain_days: 1
+          keep_minimum_runs: 1

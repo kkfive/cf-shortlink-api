@@ -13,7 +13,15 @@ export async function handleRequest(
   const method = request.method.toUpperCase()
 
   const kv = new KvHelper(env.LINKS)
-
+  if (method === 'OPTIONS') {
+    return new Response('200', {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      }
+    })
+  }
   if (method === 'POST') {
     if (params.password !== env.PASSWORD) {
       // 密码密文不正确
@@ -26,23 +34,36 @@ export async function handleRequest(
       if (!key) {
         return returnRes({ code: 0, msg: 'key不能为空', data: null })
       }
-      response = await addUrl(params.url, key, kv)
+      try {
+        response = await addUrl(params.url, key, kv, Number(params.expiration))
+      } catch (e: any) {
+        response = returnRes({
+          code: 0,
+          msg: e.message,
+          data: null
+        })
+      }
     } else if (params.type === 'delete') {
       response = await deleteUrl(params.key, kv)
     } else if (params.type === 'list') {
-      let limit = 10
+      let limit: number = 10
       try {
-        limit = Number(params.limit)
+        limit = Number(params.limit) || 10
       } catch (e) {}
       response = await listUrl(kv, limit, params.cursor)
     } else if (params.type === 'update') {
       const key = params.key
       response = await editUrl(params.url, key, kv)
     }
+
     response.headers.set('Access-Control-Allow-Origin', '*')
     response.headers.set(
       'Access-Control-Allow-Headers',
       'Content-Type, Authorization, X-Requested-With'
+    )
+    response.headers.set(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, DELETE, OPTIONS'
     )
     return response
     // API请求
