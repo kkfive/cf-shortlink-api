@@ -47,7 +47,7 @@ jobs:
       - name: 部署CF worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
-          apiKey: ${{ secrets.CF_API_KEY }}
+          apiToken: ${{ secrets.CF_API_TOKEN }}
           email: ${{ secrets.CF_EMAIL }}
 
       - name: 删除 workflow runs
