@@ -48,7 +48,6 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          email: ${{ secrets.CF_EMAIL }}
 
       - name: 删除 workflow runs
         uses: Mattraks/delete-workflow-runs@v2
