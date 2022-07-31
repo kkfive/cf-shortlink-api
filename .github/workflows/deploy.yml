@@ -45,7 +45,7 @@ jobs:
           if [ $PASSWORD ]; then sed -i 's/PASSWORD=.*/PASSWORD=\"$PASSWORD\"/' wrangler.toml; fi;
 
       - name: 部署CF worker
-        uses: cloudflare/wrangler-action@2
+        uses: cloudflare/wrangler-action@2.0.0
         with:
           apiKey: ${{ secrets.CF_API_KEY }}
           email: ${{ secrets.CF_EMAIL }}
