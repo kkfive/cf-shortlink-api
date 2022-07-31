@@ -42,7 +42,7 @@ jobs:
 
       - name: 替换密钥
         run: |
-          if [ $PASSWORD ]; then sed -i 's/PASSWORD=.*/PASSWORD=\"$PASSWORD\"/' wrangler.toml; fi;
+          if [ $PASSWORD ]; then sed -i 's/PASSWORD=.*/PASSWORD="$PASSWORD"/' wrangler.toml; fi;
 
       - name: 部署CF worker
         uses: cloudflare/wrangler-action@2.0.0
